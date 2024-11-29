@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hotel Management System</title>
+  <style>
+    /* General Styles */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(to bottom right, #ff7e5f, #feb47b);
+      color: #333;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .container {
+      text-align: center;
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 10px;
+      padding: 20px;
+      width: 90%;
+      max-width: 500px;
+      box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    h1, h2 {
+      margin-bottom: 20px;
+    }
+
+    .form-group {
+      margin: 15px 0;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-size: 1rem;
+    }
+
+    input, select, button {
+      width: 100%;
+      padding: 10px;
+      font-size: 1rem;
+      border: none;
+      border-radius: 5px;
+      margin-bottom: 10px;
+    }
+
+    button {
+      background: #ff6f61;
+      color: #fff;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background: #ff4433;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .output {
+      margin-top: 20px;
+      font-size: 1.1rem;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Hotel Management System</h1>
+    <div id="room-search">
+      <h2>Search Rooms</h2>
+      <div class="form-group">
+        <label for="location">Location:</label>
+        <input type="text" id="location" placeholder="Enter hotel location">
+      </div>
+      <div class="form-group">
+        <label for="checkin">Check-in Date:</label>
+        <input type="date" id="checkin">
+      </div>
+      <div class="form-group">
+        <label for="checkout">Check-out Date:</label>
+        <input type="date" id="checkout">
+      </div>
+      <button onclick="searchRooms()">Search Rooms</button>
+    </div>
+
+    <div id="room-results" class="hidden">
+      <h2>Available Rooms</h2>
+      <ul id="rooms-list"></ul>
+      <button onclick="goBack()">Back</button>
+    </div>
+
+    <div id="booking-confirmation" class="hidden">
+      <h2>Booking Confirmation</h2>
+      <p class="output" id="booking-details"></p>
+      <button onclick="restart()">Book Another Room</button>
+    </div>
+  </div>
+
+  <script>
+    // Dummy room data
+    const rooms = [
+      { location: "New York", type: "Deluxe Room", price: "$200/night", availability: "Available" },
+      { location: "Paris", type: "Suite", price: "$300/night", availability: "Available" },
+      { location: "Tokyo", type: "Standard Room", price: "$150/night", availability: "Available" }
+    ];
+
+    function searchRooms() {
+      const location = document.getElementById('location').value.trim();
+      const checkin = document.getElementById('checkin').value;
+      const checkout = document.getElementById('checkout').value;
+
+      if (!location || !checkin || !checkout) {
+        alert('Please fill all the fields.');
+        return;
+      }
+
+      const results = rooms.filter(room =>
+        room.location.toLowerCase() === location.toLowerCase()
+      );
+
+      if (results.length > 0) {
+        displayRooms(results);
+      } else {
+        alert('No rooms found for the entered location.');
+      }
+    }
+
+    function displayRooms(rooms) {
+      const roomSearchDiv = document.getElementById('room-search');
+      const roomResultsDiv = document.getElementById('room-results');
+      const roomsList = document.getElementById('rooms-list');
+
+      roomsList.innerHTML = '';
+      rooms.forEach(room => {
+        const li = document.createElement('li');
+        li.textContent = `${room.type} - ${room.price} (${room.availability})`;
+        const bookButton = document.createElement('button');
+        bookButton.textContent = "Book Now";
+        bookButton.onclick = () => confirmBooking(room);
+        li.appendChild(bookButton);
+        roomsList.appendChild(li);
+      });
+
+      roomSearchDiv.classList.add('hidden');
+      roomResultsDiv.classList.remove('hidden');
+    }
+
+    function confirmBooking(room) {
+      const roomResultsDiv = document.getElementById('room-results');
+      const bookingConfirmationDiv = document.getElementById('booking-confirmation');
+      const bookingDetails = document.getElementById('booking-details');
+
+      bookingDetails.textContent = `You have successfully booked a ${room.type} in ${room.location} at ${room.price}.`;
+
+      roomResultsDiv.classList.add('hidden');
+      bookingConfirmationDiv.classList.remove('hidden');
+    }
+
+    function goBack() {
+      const roomSearchDiv = document.getElementById('room-search');
+      const roomResultsDiv = document.getElementById('room-results');
+
+      roomSearchDiv.classList.remove('hidden');
+      roomResultsDiv.classList.add('hidden');
+    }
+
+    function restart() {
+      const roomSearchDiv = document.getElementById('room-search');
+      const bookingConfirmationDiv = document.getElementById('booking-confirmation');
+
+      roomSearchDiv.classList.remove('hidden');
+      bookingConfirmationDiv.classList.add('hidden');
+    }
+  </script>
+</body>
+</html>
